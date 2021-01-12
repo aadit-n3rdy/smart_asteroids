@@ -1,0 +1,12 @@
+{
+    "button":
+    {
+	"font":
+	{
+	    "name":"arcadeclassic",
+	    "size":"24",
+	    "regular_path":"ARCADECLASSIC.TTF"
+	}
+    }
+
+}
