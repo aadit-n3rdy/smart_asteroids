@@ -14,3 +14,6 @@ Modules used
 Software used
 ->emacs (code and text editing)
 ->Inkscape (Sprite creation)
+
+Credit to pizzaguy for the font arcade classic
+https://www.dafont.com/arcade-classic-2.font
