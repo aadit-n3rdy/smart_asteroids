@@ -18,7 +18,7 @@ def main_menu(surface: pygame.surface.Surface):
     gui_manager = pygame_gui.UIManager(
         (constants.window_width, constants.window_height), 'main_menu_theme.json')
     clock = pygame.time.Clock()
-    font = pygame.font.Font("ARCADECLASSIC.TTF", 98, bold=True)
+    font = pygame.font.Font("ARCADECLASSIC.TTF", 98)
     title_img = font.render("Smart Asteroids", True,
                             (200, 200, 200, 200), background_color)
     title_rect = title_img.get_rect()
