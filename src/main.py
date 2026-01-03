@@ -15,11 +15,12 @@ screen_size = (window_width, window_height)
 surface = pg.display.set_mode(screen_size)
 
 game_state = GAME_STATES.MAIN_MENU
+standard_mode = False
 
 while game_state != GAME_STATES.QUIT:
     if game_state == GAME_STATES.MAIN_MENU:
-        game_state = main_menu.main_menu(surface)
+        game_state, standard_mode = main_menu.main_menu(surface)
     elif game_state == GAME_STATES.IN_GAME:
-        game_state = game.ingame(surface)
+        game_state = game.ingame(surface, standard_mode)
 
 pg.quit()

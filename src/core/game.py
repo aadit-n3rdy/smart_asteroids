@@ -18,7 +18,7 @@ background_color = (0, 0, 0)
 def calc_quality(ast : asteroid.asteroid):
     return - ast.avg_dist_sqrt * ast.avg_dist_samples
 
-def ingame(surface: pygame.surface.Surface):
+def ingame(surface: pygame.surface.Surface, standard_mode: bool = False):
 
     """
     Create the asteroids
@@ -33,6 +33,18 @@ def ingame(surface: pygame.surface.Surface):
     score_rect = score_img.get_rect()
     score_rect.topright = (constants.window_width - 30, 30)
     asteroids_group = pygame.sprite.Group()
+    
+    default_nn = None
+    if standard_mode:
+        from src.utils.neural_network import neural_network
+        default_nn = neural_network([2, 2])
+        try:
+             # Use absolute path for safety or get_asset_path if I defined it for general files?
+             # get_asset_path points to assets/, so we can use it.
+             default_nn.load(get_asset_path('checkpoints/default.pkl'))
+        except FileNotFoundError:
+            print("Warning: Default checkpoint not found. Using random weights.")
+
     for i in range(0, asteroid_count):
         tmp_start_vel = [0, 0]
         tmp_start_pos = [0, 0]
@@ -47,6 +59,15 @@ def ingame(surface: pygame.surface.Surface):
         tmp = asteroid.asteroid(asteroid_count, numpy.array(tmp_start_pos),
                                 constants.generalise_height(constants.asteroid_radius),
                                 numpy.array(tmp_start_vel))
+        
+        if standard_mode and default_nn:
+            # Manually copy weights from default_nn to tmp.network
+            # Or implement a copy method in NN? 
+            # We can use save/load logic or just direct assignment if we are careful.
+            # tmp.network is already initialized in init.
+            tmp.network.weights = [w.copy() for w in default_nn.weights]
+            tmp.network.biases = [b.copy() for b in default_nn.biases]
+
         asteroids_group.add(tmp)
     player = rocket.rocket()
     bullets = []
@@ -93,14 +114,15 @@ def ingame(surface: pygame.surface.Surface):
         and create new ones if necessary
         """
         to_be_removed = []
-        if parent is None:
+        if parent is None and not standard_mode:
             parent = asteroids_group.sprites()[0]
             parent_qual = calc_quality(parent)
         for a in asteroids_group:
-            qual = calc_quality(a)
-            if qual > parent_qual:
-                parent = a
-                parent_qual = qual
+            if not standard_mode:
+                qual = calc_quality(a)
+                if qual > parent_qual:
+                    parent = a
+                    parent_qual = qual
         for ast in asteroids_group:
             if ast.status == asteroid.ASTEROID_STATUS.DESTROYED:
                 to_be_removed.append(ast)
@@ -129,7 +151,11 @@ def ingame(surface: pygame.surface.Surface):
             tmp = asteroid.asteroid(asteroid_count, numpy.array(tmp_start_pos),
                                     constants.generalise_height(constants.asteroid_radius),
                                     numpy.array(tmp_start_vel))
-            tmp.evolve_from(parent)
+            if not standard_mode:
+                tmp.evolve_from(parent)
+            elif default_nn:
+                 tmp.network.weights = [w.copy() for w in default_nn.weights]
+                 tmp.network.biases = [b.copy() for b in default_nn.biases]
             asteroids_group.add(tmp)
         to_be_removed = []
 

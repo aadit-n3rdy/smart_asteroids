@@ -31,6 +31,12 @@ def main_menu(surface: pygame.surface.Surface):
                                    (constants.window_width*340//1280, constants.window_height*80//720))
     play_button = pygame_gui.elements.UIButton(
         relative_rect=play_button_rect, text="Play", manager=gui_manager)
+    
+    standard_button_rect = pygame.Rect((constants.window_width*470//1280, constants.window_height*467//720),
+                                    (constants.window_width*340//1280, constants.window_height*80//720))
+    standard_button = pygame_gui.elements.UIButton(
+        relative_rect=standard_button_rect, text="Standard Mode", manager=gui_manager)
+
     quit_button_rect = pygame.Rect((constants.window_width*470//1280, constants.window_height*529//720),
                                    (constants.window_width*340//1280, constants.window_height*80/720))
     quit_button = pygame_gui.elements.UIButton(
@@ -45,9 +51,11 @@ def main_menu(surface: pygame.surface.Surface):
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == play_button:
-                        return game_states.GAME_STATES.IN_GAME
+                        return (game_states.GAME_STATES.IN_GAME, False) # Standard Mode = False
+                    elif event.ui_element == standard_button:
+                        return (game_states.GAME_STATES.IN_GAME, True) # Standard Mode = True
                     elif event.ui_element == quit_button:
-                        return game_states.GAME_STATES.QUIT
+                        return (game_states.GAME_STATES.QUIT, False)
             gui_manager.process_events(event)
 
         gui_manager.update(dt)

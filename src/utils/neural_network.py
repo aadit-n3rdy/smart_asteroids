@@ -58,3 +58,15 @@ class neural_network:
                 # tmp.flat[j] += self.biases[i].flat[j]
                 tmp.flat[j] = activate(tmp.flat[j])
         return tmp.flatten()  # Returns a 1D array (vector) copy, safer for consumers than a 2D column vector from copy
+
+    def save(self, path: str):
+        import pickle
+        with open(path, 'wb') as f:
+            pickle.dump({'weights': self.weights, 'biases': self.biases}, f)
+
+    def load(self, path: str):
+        import pickle
+        with open(path, 'rb') as f:
+            data = pickle.load(f)
+            self.weights = data['weights']
+            self.biases = data['biases']
