@@ -1,0 +1,2 @@
+# Smart Asteroids Game Package
+

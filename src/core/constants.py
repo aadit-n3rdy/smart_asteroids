@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 window_width = 1920
 window_height = 1080
@@ -16,4 +17,9 @@ def generalise_height(height: int):
     return window_height*height//720
 def generalise_width(width: int):
     return window_width*width//1280
+
+def get_asset_path(*path_parts):
+    """Get path to an asset file relative to project root."""
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    return os.path.join(project_root, 'assets', *path_parts)
 

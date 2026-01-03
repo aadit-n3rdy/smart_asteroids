@@ -1,6 +1,6 @@
 import numpy as np
 import pygame
-import constants
+from src.core import constants
 
 
 class bullet():

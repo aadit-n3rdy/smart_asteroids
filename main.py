@@ -5,10 +5,10 @@ Manages the 'state' of the game
 Loads  different 'states'
 """
 import pygame as pg
-from game_states import GAME_STATES
-import main_menu
-import game
-from constants import window_height, window_width
+from src.core.game_states import GAME_STATES
+from src.ui import main_menu
+from src.core import game
+from src.core.constants import window_height, window_width
 
 pg.init()
 screen_size = (window_width, window_height)

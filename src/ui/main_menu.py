@@ -4,8 +4,9 @@ Allows user to play  or quit
 """
 import pygame
 import pygame_gui
-import constants
-import game_states
+from src.core import constants
+from src.core.constants import get_asset_path
+from src.core import game_states
 
 background_color = (100, 100, 100)
 
@@ -15,10 +16,12 @@ def main_menu(surface: pygame.surface.Surface):
     Initiates a few required variables
     (GUI management, fonts, text)
     """
+    theme_path = get_asset_path('themes', 'main_menu_theme.json')
     gui_manager = pygame_gui.UIManager(
-        (constants.window_width, constants.window_height), 'main_menu_theme.json')
+        (constants.window_width, constants.window_height), theme_path)
     clock = pygame.time.Clock()
-    font = pygame.font.Font("ARCADECLASSIC.TTF", 98)
+    font_path = get_asset_path('fonts', 'ARCADECLASSIC.TTF')
+    font = pygame.font.Font(font_path, 98)
     title_img = font.render("Smart Asteroids", True,
                             (200, 200, 200, 200), background_color)
     title_rect = title_img.get_rect()
