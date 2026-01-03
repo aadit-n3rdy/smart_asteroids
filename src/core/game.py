@@ -245,7 +245,7 @@ def game_over_menu(surface: pygame.surface.Surface, score: int):
                         constants.generalise_height(292))
 
     score_font = pygame.font.Font(
-        "ARCADECLASSIC.TTF", constants.generalise_height(48))
+        get_asset_path("fonts/ARCADECLASSIC.TTF"), constants.generalise_height(48))
     string = "Score is " + str(score)
     score_img = score_font.render(string, True, over_foreground, over_background)
     score_rect = score_img.get_rect()
