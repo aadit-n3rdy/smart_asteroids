@@ -46,7 +46,7 @@ decision-making.
 
 ---
 
-## ☠️ Game Over Screen Controls
+## Game Over Screen Controls
 - **Mouse Cursor** — Navigate the game over menu.
 - **Left Mouse Button (Click)**:
   - **RESTART** — Start a new game.
