@@ -8,8 +8,11 @@ import pygame_gui
 import constants
 import numpy
 import rocket
-import asteroid
+import pickle
+import os 
+import asteroid 
 from game_states import GAME_STATES
+CHECKPOINT_FILE = "checkpoint.pkl"
 
 background_color = (0, 0, 0)
 
@@ -31,6 +34,11 @@ def ingame(surface: pygame.surface.Surface):
         str(score), True, (200, 200, 200), background_color)
     score_rect = score_img.get_rect()
     score_rect.topright = (constants.window_width - 30, 30)
+    saved_network = None
+    if os.path.exists(CHECKPOINT_FILE):
+        with open(CHECKPOINT_FILE, "rb") as f:
+            saved_network = pickle.load(f)
+
     asteroids_group = pygame.sprite.Group()
     for i in range(0, asteroid_count):
         tmp_start_vel = [0, 0]
@@ -46,6 +54,9 @@ def ingame(surface: pygame.surface.Surface):
         tmp = asteroid.asteroid(asteroid_count, numpy.array(tmp_start_pos),
                                 constants.generalise_height(constants.asteroid_radius),
                                 numpy.array(tmp_start_vel))
+        if saved_network is not None:
+            tmp.network = saved_network
+
         asteroids_group.add(tmp)
     player = rocket.rocket()
     bullets = []
@@ -66,7 +77,11 @@ def ingame(surface: pygame.surface.Surface):
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return GAME_STATES.QUIT
+                if len(asteroids_group) > 0:
+                    with open("checkpoint.pkl", "wb") as f:
+                        pickle.dump(list(asteroids-group)[0].network, f)
+                        return GAME_STATES.QUIT
+
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     ret = pause_menu(surface)
@@ -210,14 +225,12 @@ def pause_menu(surface: pygame.surface.Surface):
                         return GAME_STATES.MAIN_MENU
 
             gui_manager.process_events(event)
-
-        gui_manager.update(dt)
-
-        surface.fill(paused_background, menu_rect)
-        surface.blit(pause_img, pause_rect)
-        gui_manager.draw_ui(surface)
-
-        pygame.display.update(menu_rect)
+            
+gui_manager.update(dt)
+surface.fill(paused_background, menu_rect)
+surface.blit(pause_img, pause_rect)
+gui_manager.draw_ui(surface)
+pygame.display.update(menu_rect)   
 
 
 def game_over_menu(surface: pygame.surface.Surface, score: int):
