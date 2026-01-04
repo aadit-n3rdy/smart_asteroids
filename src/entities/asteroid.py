@@ -1,10 +1,11 @@
-from neural_network import neural_network
-import rocket
+from src.utils.neural_network import neural_network
+import src.entities.rocket as rocket
 import numpy as np
 import enum
-from constants import *
+from src.utils.constants import *
+from src.utils.constants import get_asset_path
 import pygame
-import bullet
+import src.entities.bullet as bullet
 
 
 class ASTEROID_STATUS(enum.Enum):
@@ -42,7 +43,7 @@ class asteroid(pygame.sprite.Sprite):
         self.velocity = np.array(start_velocity)
         self.status = ASTEROID_STATUS.ALIVE
         self.image = pygame.transform.rotate(pygame.transform.smoothscale(
-            pygame.image.load('asteroid.png').convert_alpha(),
+            pygame.image.load(get_asset_path('images/asteroid.png')).convert_alpha(),
             (2*int(generalise_height(radius)),
              2*int(generalise_height(radius)))), np.random.random()*360)
         self.rect = self.image.get_rect()
