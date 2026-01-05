@@ -11,6 +11,8 @@ asteroid_accel_coeff = 150.0
 asteroid_vel_coeff = 1.0
 asteroid_start_vel = 0
 bullet_velocity = 1000
+EVOLUTION_STRATEGY = "crossover"
+
 
 def generalise_height(height: int):
     return window_height*height//720
