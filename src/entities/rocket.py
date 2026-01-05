@@ -5,12 +5,13 @@ Defines the rocket class
 import numpy as np
 import pygame
 import enum
-from constants import window_width
-from constants import window_height
-from constants import generalise_height
-from constants import rocket_accel_coeff
-from constants import rocket_velocity_coeff
-import bullet
+from src.utils.constants import window_width
+from src.utils.constants import window_height
+from src.utils.constants import generalise_height
+from src.utils.constants import rocket_accel_coeff
+from src.utils.constants import rocket_velocity_coeff
+from src.utils.constants import get_asset_path
+import src.entities.bullet as bullet
 
 
 class ROCKET_STATUS(enum.Enum):
@@ -38,7 +39,7 @@ class rocket(pygame.sprite.Sprite):
         self.angle = 0.0
         self.status = ROCKET_STATUS.ALIVE
         self.unrotated_image = pygame.transform.smoothscale(pygame.image.load(
-            'rocket2.png').convert_alpha(),
+            get_asset_path('images/rocket2.png')).convert_alpha(),
             (generalise_height(20), generalise_height(20)))
         self.last_shot_tick = -1000
 

@@ -1,4 +1,14 @@
 import numpy as np
+import os
+
+def get_asset_path(path: str) -> str:
+    """
+    Returns the absolute path to an asset file.
+    Assumes the 'assets' folder is in the project root.
+    """
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return os.path.join(base_dir, 'assets', path)
+
 
 window_width = 1920
 window_height = 1080

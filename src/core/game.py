@@ -5,13 +5,14 @@ Game state, include the pause menu and the game over menu
 
 import pygame
 import pygame_gui
-import constants
+import src.utils.constants as constants
+from src.utils.constants import get_asset_path
 import numpy
-import rocket
-import asteroid
-from game_states import GAME_STATES
-from evolution.factory import get_evolution_strategy
-from constants import EVOLUTION_STRATEGY
+import src.entities.rocket as rocket
+import src.entities.asteroid as asteroid
+from src.core.game_states import GAME_STATES
+from src.evolution.factory import get_evolution_strategy
+
 
 background_color = (0, 0, 0)
 
@@ -27,7 +28,7 @@ def ingame(surface: pygame.surface.Surface):
     """
     asteroid_count = 8
     clock = pygame.time.Clock()
-    font = pygame.font.Font("ARCADECLASSIC.TTF", 48)
+    font = pygame.font.Font(get_asset_path("fonts/ARCADECLASSIC.TTF"), 48)
     score = 0
     score_img = font.render(
         str(score), True, (200, 200, 200), background_color)
@@ -51,7 +52,7 @@ def ingame(surface: pygame.surface.Surface):
         asteroids_group.add(tmp)
     player = rocket.rocket()
     bullets = []
-    ea_strategy = get_evolution_strategy(EVOLUTION_STRATEGY)
+    ea_strategy = get_evolution_strategy(constants.EVOLUTION_STRATEGY)
     parents = []
     
     last_best_check_tick = -1000
@@ -164,9 +165,9 @@ def pause_menu(surface: pygame.surface.Surface):
     paused_foreground = (200, 200, 200)
 
     gui_manager = pygame_gui.UIManager(
-        (constants.window_width, constants.window_height), 'pause_menu_theme.json')
+        (constants.window_width, constants.window_height), get_asset_path('themes/pause_menu_theme.json'))
     clock = pygame.time.Clock()
-    font = pygame.font.Font("ARCADECLASSIC.TTF",
+    font = pygame.font.Font(get_asset_path("fonts/ARCADECLASSIC.TTF"),
                             constants.generalise_height(75))
     pause_img = font.render("game paused", True,
                             paused_foreground, paused_background)
@@ -233,9 +234,9 @@ def game_over_menu(surface: pygame.surface.Surface, score: int):
     over_foreground = (200, 200, 200)
 
     gui_manager = pygame_gui.UIManager(
-        (constants.window_width, constants.window_height), 'game_over_theme.json')
+        (constants.window_width, constants.window_height), get_asset_path('themes/game_over_theme.json'))
     clock = pygame.time.Clock()
-    font = pygame.font.Font("ARCADECLASSIC.TTF",
+    font = pygame.font.Font(get_asset_path("fonts/ARCADECLASSIC.TTF"),
                             constants.generalise_height(75))
     over_img = font.render("game over", True,
                            over_foreground, over_background)
@@ -244,7 +245,7 @@ def game_over_menu(surface: pygame.surface.Surface, score: int):
                         constants.generalise_height(292))
 
     score_font = pygame.font.Font(
-        "ARCADECLASSIC.TTF", constants.generalise_height(48))
+        get_asset_path("fonts/ARCADECLASSIC.TTF"), constants.generalise_height(48))
     string = "Score is " + str(score)
     score_img = score_font.render(string, True, over_foreground, over_background)
     score_rect = score_img.get_rect()

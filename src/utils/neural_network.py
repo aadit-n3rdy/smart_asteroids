@@ -66,4 +66,4 @@ class neural_network:
             for j in range(0, len(tmp.flat)):
                 # tmp.flat[j] += self.biases[i].flat[j]
                 tmp.flat[j] = activate(tmp.flat[j])
-        return tmp.copy()
+        return tmp.flatten()  # Returns a 1D array (vector) copy, safer for consumers than a 2D column vector from copy

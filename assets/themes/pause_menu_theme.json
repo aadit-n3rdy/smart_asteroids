@@ -5,7 +5,8 @@
 	{
 	    "name":"arcadeclassic",
 	    "size":"24",
-	    "regular_path":"ARCADECLASSIC.TTF"
+	    "regular_path":"assets/fonts/ARCADECLASSIC.TTF"
+	    
 	}
     }
 

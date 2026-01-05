@@ -1,5 +1,5 @@
 import random
-from evolution.base import BaseEvolution
+from src.evolution.base import BaseEvolution
 
 class TournamentSelectionEvolution(BaseEvolution):
     def evolve(self, child_network, parents):
