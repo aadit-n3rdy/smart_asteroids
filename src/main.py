@@ -7,6 +7,7 @@ Loads  different 'states'
 import pygame as pg
 from src.core.game_states import GAME_STATES
 import src.ui.main_menu as main_menu
+import src.ui.user_guide as user_guide
 import src.core.game as game
 from src.utils.constants import window_height, window_width
 
@@ -19,7 +20,12 @@ game_state = GAME_STATES.MAIN_MENU
 while game_state != GAME_STATES.QUIT:
     if game_state == GAME_STATES.MAIN_MENU:
         game_state = main_menu.main_menu(surface)
+        print("Returned from main_menu:", game_state)
     elif game_state == GAME_STATES.IN_GAME:
         game_state = game.ingame(surface)
+    elif game_state == GAME_STATES.USER_GUIDE:
+        import src.ui.user_guide as user_guide
+        game_state = user_guide.user_guide(surface)
+
 
 pg.quit()
