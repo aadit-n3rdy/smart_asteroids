@@ -2,6 +2,8 @@
 
 A modern twist on the classic Asteroids game where the enemies (asteroids) use a **Genetic Algorithm** to learn and adapt to your playstyle.
 
+![Smart Asteroids Demo](demo.gif)
+
 ## Evolutionary AI Framework
 This project features a modular evolutionary framework, allowing for plug-and-play AI strategies. The asteroids are controlled by neural networks that evolve over generations.
 
