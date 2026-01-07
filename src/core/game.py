@@ -11,6 +11,8 @@ import numpy
 import src.entities.rocket as rocket
 import src.entities.asteroid as asteroid
 from src.core.game_states import GAME_STATES
+from src.evolution.factory import get_evolution_strategy
+
 
 background_color = (0, 0, 0)
 
@@ -50,8 +52,9 @@ def ingame(surface: pygame.surface.Surface):
         asteroids_group.add(tmp)
     player = rocket.rocket()
     bullets = []
-    parent = None
-    parent_qual = 0
+    ea_strategy = get_evolution_strategy(constants.EVOLUTION_STRATEGY)
+    parents = []
+    
     last_best_check_tick = -1000
 
     is_running = True
@@ -93,14 +96,11 @@ def ingame(surface: pygame.surface.Surface):
         and create new ones if necessary
         """
         to_be_removed = []
-        if parent is None:
-            parent = asteroids_group.sprites()[0]
-            parent_qual = calc_quality(parent)
-        for a in asteroids_group:
-            qual = calc_quality(a)
-            if qual > parent_qual:
-                parent = a
-                parent_qual = qual
+        
+        current_asteroids = asteroids_group.sprites()
+        if current_asteroids:
+            current_asteroids.sort(key=ea_strategy.calculate_fitness, reverse=True)
+            parents = current_asteroids[:2]
         for ast in asteroids_group:
             if ast.status == asteroid.ASTEROID_STATUS.DESTROYED:
                 to_be_removed.append(ast)
@@ -129,7 +129,7 @@ def ingame(surface: pygame.surface.Surface):
             tmp = asteroid.asteroid(asteroid_count, numpy.array(tmp_start_pos),
                                     constants.generalise_height(constants.asteroid_radius),
                                     numpy.array(tmp_start_vel))
-            tmp.evolve_from(parent)
+            ea_strategy.evolve(tmp.network, parents)
             asteroids_group.add(tmp)
         to_be_removed = []
 

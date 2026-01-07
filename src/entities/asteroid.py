@@ -54,9 +54,6 @@ class asteroid(pygame.sprite.Sprite):
         self.avg_dist_samples = 0
         self.avg_dist_sqrt = window_width**0.5
 
-    def evolve_from(self, parent):
-        self.network.from_parent(parent.network)
-
     def die(self):
         self.status = ASTEROID_STATUS.DESTROYED
 
@@ -71,7 +68,7 @@ class asteroid(pygame.sprite.Sprite):
             # inp[1] = self.velocity[1]
             inp[0] = player.position[0] - self.position[0]
             inp[1] = player.position[1] - self.position[1]
-            out = self.network.calculate(np.array(inp))
+            out = self.network.calculate(np.array(inp)).flatten()
 
             """
             Updates the velocity and position

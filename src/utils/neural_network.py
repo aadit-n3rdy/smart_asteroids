@@ -49,6 +49,15 @@ class neural_network:
                     random.randrange(-100000, 100000) / \
                     100000.0 + self.weights[i].flat[j]
 
+    def crossover_from_parents(self, parent_a, parent_b):
+        self.learning_rate = parent_a.learning_rate * 0.5
+        for i in range(len(self.weights)):
+            mask = np.random.randint(0, 2, size=self.weights[i].shape).astype(bool)
+            self.weights[i] = np.where(mask, parent_a.weights[i], parent_b.weights[i]).copy()
+            for j in range(len(self.weights[i].flat)):
+                mutation = self.learning_rate * random.randrange(-100000, 100000) / 100000.0
+                self.weights[i].flat[j] += mutation
+
     def calculate(self, inp):
         tmp = inp
         tmp.resize((len(tmp.flat), 1))
