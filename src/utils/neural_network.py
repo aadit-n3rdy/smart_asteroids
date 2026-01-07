@@ -4,9 +4,12 @@ Defines the neural network class
 Sigmoid activation function
 """
 
+from more_itertools import last
 import numpy as np
 import math
 import random
+import pickle
+
 
 start_range = 10.0
 rand_choice_array = np.arange(-1, 1.0001, 0.001)
@@ -66,4 +69,14 @@ class neural_network:
             for j in range(0, len(tmp.flat)):
                 # tmp.flat[j] += self.biases[i].flat[j]
                 tmp.flat[j] = activate(tmp.flat[j])
-        return tmp.flatten()  # Returns a 1D array (vector) copy, safer for consumers than a 2D column vector from copy
+            return tmp.flatten()  # Returns a 1D array (vector) copy, safer for consumers than a 2D column vector from copy
+    
+    def save(self, path="weights.pkl"):
+            with open(path, "wb") as f:
+                pickle.dump(self, f)
+
+    @staticmethod
+    def load(path="weights.pkl"):
+        with open(path, "rb") as f:
+            return pickle.load(f)
+

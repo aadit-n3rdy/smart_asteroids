@@ -12,6 +12,9 @@ import src.entities.rocket as rocket
 import src.entities.asteroid as asteroid
 from src.core.game_states import GAME_STATES
 from src.evolution.factory import get_evolution_strategy
+import os
+from src.utils.neural_network import neural_network
+
 
 
 background_color = (0, 0, 0)
@@ -50,24 +53,29 @@ def ingame(surface: pygame.surface.Surface):
                                 constants.generalise_height(constants.asteroid_radius),
                                 numpy.array(tmp_start_vel))
         asteroids_group.add(tmp)
+
     player = rocket.rocket()
     bullets = []
     ea_strategy = get_evolution_strategy(constants.EVOLUTION_STRATEGY)
     parents = []
-    
+    # load pretrained weights if available
+    if os.path.exists("weights.pkl"):
+        pretrained = neural_network.load("weights.pkl")
+    else:
+        pretrained = None
+
     last_best_check_tick = -1000
 
     is_running = True
     while is_running:
-
         """
         Calculate the time taken for the previous frame and cap FPS to 60
         """
         dt = clock.tick(60)/1000.0
 
         """
-        Handle input and quit events
-        """
+            Handle input and quit events
+            """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return GAME_STATES.QUIT
@@ -88,8 +96,8 @@ def ingame(surface: pygame.surface.Surface):
         """
         asteroids_group.update(asteroids_group, player, dt, bullets)
         player.update(asteroids_group, dt, bullets)
-        for i in range(0, len(bullets)):
-            bullets[i].update(dt)
+        for bullet in bullets:
+            bullet.update(dt)
 
         """
         Remove destroyed asteroids,
@@ -101,51 +109,63 @@ def ingame(surface: pygame.surface.Surface):
         if current_asteroids:
             current_asteroids.sort(key=ea_strategy.calculate_fitness, reverse=True)
             parents = current_asteroids[:2]
-        for ast in asteroids_group:
-            if ast.status == asteroid.ASTEROID_STATUS.DESTROYED:
-                to_be_removed.append(ast)
-                if ast.destroyed_by_player:
-                    """
-                    Increment the score and update the score display
-                    if an asteroid has been destroyed by the player
-                    """
-                    score += 1
-                    score_img = font.render(
-                        str(score), True, (200, 200, 200), background_color)
-                    score_rect = score_img.get_rect()
-                    score_rect.topright = (constants.window_width-30, 30)
-        for r in to_be_removed:
-            asteroids_group.remove(r)
-            tmp_start_vel = [0, 0]
-            tmp_start_pos = [0, 0]
-            if numpy.random.random() < 0.5:
-                tmp_start_pos = [0 - constants.asteroid_radius, constants.window_height *
-                                 (0.1 + numpy.random.random()*0.8)]
-                tmp_start_vel = [constants.asteroid_start_vel, 0]
-            else:
-                tmp_start_pos = [constants.window_width + constants.asteroid_radius,
-                                 constants.window_height * numpy.random.random()]
-                tmp_start_vel = [-constants.asteroid_start_vel, 0]
-            tmp = asteroid.asteroid(asteroid_count, numpy.array(tmp_start_pos),
-                                    constants.generalise_height(constants.asteroid_radius),
-                                    numpy.array(tmp_start_vel))
-            ea_strategy.evolve(tmp.network, parents)
-            asteroids_group.add(tmp)
-        to_be_removed = []
+
+            best_asteroid = current_asteroids[0]
+
+            # save best network every ~5 seconds
+            if pygame.time.get_ticks() - last_best_check_tick > 5000:
+                best_asteroid.network.save("weights.pkl")
+                last_best_check_tick = pygame.time.get_ticks()
+
+            for ast in asteroids_group:
+                if ast.status == asteroid.ASTEROID_STATUS.DESTROYED:
+                    to_be_removed.append(ast)
+                    if ast.destroyed_by_player:
+                        """
+                        Increment the score and update the score display
+                        if an asteroid has been destroyed by the player
+                        """
+                        score += 1
+                        score_img = font.render(
+                            str(score), True, (200, 200, 200), background_color)
+                        score_rect = score_img.get_rect()
+                        score_rect.topright = (constants.window_width-30, 30)
+            for r in to_be_removed:
+                asteroids_group.remove(r)
+                tmp_start_vel = [0, 0]
+                tmp_start_pos = [0, 0]
+                if numpy.random.random() < 0.5:
+                    tmp_start_pos = [0 - constants.asteroid_radius, constants.window_height *
+                                    (0.1 + numpy.random.random()*0.8)]
+                    tmp_start_vel = [constants.asteroid_start_vel, 0]
+                else:
+                    tmp_start_pos = [constants.window_width + constants.asteroid_radius,
+                                    constants.window_height * numpy.random.random()]
+                    tmp_start_vel = [-constants.asteroid_start_vel, 0]
+                tmp = asteroid.asteroid(
+                    asteroid_count,
+                    numpy.array(tmp_start_pos),
+                    constants.generalise_height(constants.asteroid_radius),
+                    numpy.array(tmp_start_vel)
+                )
+                if pretrained is not None:
+                    tmp.network = pretrained
+
+                ea_strategy.evolve(tmp.network, parents)
+                asteroids_group.add(tmp)
 
         """
         Clear the background and draw the player, asteroids
         and the bullets
         """
         surface.fill(background_color)
-        for i in range(0, len(bullets)):
-            pos = bullets[i].position
-            if pos[0] < 0 or pos[0] > constants.window_width or pos[1] < 0 or\
-               pos[1] > constants.window_height:
-                to_be_removed.append(bullets[i])
-            bullets[i].draw(surface)
-        for i in to_be_removed:
-            bullets.remove(i)
+        for bullet in bullets[:]:  
+            pos = bullet.position
+            if (pos[0] < 0 or pos[0] > constants.window_width or
+                    pos[1] < 0 or pos[1] > constants.window_height):
+                bullets.remove(bullet)
+            else:
+                bullet.draw(surface)
         asteroids_group.draw(surface)
         surface.blit(player.image, player.rect)
         surface.blit(score_img, score_rect)
