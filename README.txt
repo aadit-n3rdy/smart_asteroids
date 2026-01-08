@@ -10,6 +10,7 @@ Modules used
 ->pygame
 ->numpy
 ->pygame-gui
+->pygame-ce (stability and cross-compatability)
 
 Software used
 ->emacs (code and text editing)
