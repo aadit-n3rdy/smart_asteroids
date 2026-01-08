@@ -59,7 +59,7 @@ The player controls a spaceship in open space
 Asteroids continuously spawn and move across the screen
 Shooting an asteroid destroys it
 Asteroids can also be destroyed by colliding with each other
-If the player's ship collides with an asteroid, the ship is destroyed and the game ends
+If the ship collides with an asteroid then the ship is destroyed and the game ends
 The game transitions to an end screen after the ship is destroyed
 The player earns **1 point for each asteroid destroyed
 
