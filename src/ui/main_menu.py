@@ -29,12 +29,13 @@ def main_menu(surface: pygame.surface.Surface):
                        constants.window_height*250//720)
     play_button_rect = pygame.Rect((constants.window_width*470//1280, constants.window_height*405//720),
                                    (constants.window_width*340//1280, constants.window_height*80//720))
-    play_button = pygame_gui.elements.UIButton(
-        relative_rect=play_button_rect, text="Play", manager=gui_manager)
+    play_button = pygame_gui.elements.UIButton(relative_rect=play_button_rect, text="Play", manager=gui_manager)
+    user_guide_button_rect = pygame.Rect((constants.window_width * 470 // 1280, constants.window_height * 467 // 720),
+                                         (constants.window_width * 340 // 1280, constants.window_height * 80 // 720))
+    user_guide_button = pygame_gui.elements.UIButton(relative_rect=user_guide_button_rect, text="User Guide",manager=gui_manager)
     quit_button_rect = pygame.Rect((constants.window_width*470//1280, constants.window_height*529//720),
                                    (constants.window_width*340//1280, constants.window_height*80/720))
-    quit_button = pygame_gui.elements.UIButton(
-        relative_rect=quit_button_rect, text="Quit", manager=gui_manager)
+    quit_button = pygame_gui.elements.UIButton(relative_rect=quit_button_rect, text="Quit", manager=gui_manager)
 
     is_running = True
     while is_running:
@@ -46,6 +47,8 @@ def main_menu(surface: pygame.surface.Surface):
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == play_button:
                         return game_states.GAME_STATES.IN_GAME
+                    elif event.ui_element == user_guide_button:
+                        return game_states.GAME_STATES.USER_GUIDE
                     elif event.ui_element == quit_button:
                         return game_states.GAME_STATES.QUIT
             gui_manager.process_events(event)

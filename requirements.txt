@@ -1,3 +1,5 @@
 pygame-ce
 pygame_gui
 numpy
+pygame==2.6.1
+pygame_gui==0.6.14
